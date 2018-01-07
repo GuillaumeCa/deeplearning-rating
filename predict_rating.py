@@ -1,7 +1,11 @@
 from keras.models import load_model
 import utils
 
-model_name = 'model_amz_music_instruments.h5'
+tokenizer = utils.load_tokens()
+input_data = utils.convert_review('I like this a lot !', tokenizer)
+
+model_name = 'model/model_amz_music_instruments.h5'
 model = load_model(model_name)
 
-model.predict()
+predictions = model.predict(input_data)
+utils.display_rating(predictions)
