@@ -9,6 +9,7 @@ from keras.preprocessing import sequence, text
 from keras.utils.np_utils import to_categorical
 from matplotlib import pyplot
 import json
+import time
 
 import utils
 from config import *
@@ -57,7 +58,6 @@ utils.save_tokens(tokenizer)
 # convert sequences of words to sequences of integers
 reviewsText = tokenizer.texts_to_sequences(reviewsText)
 
-print reviewsRatings[:10]
 reviewsRatings = to_categorical(reviewsRatings, num_classes=5)
 
 # Create training and testing sets
@@ -81,8 +81,8 @@ model.add(Embedding(TOP_WORDS, EMBEDDING_VECTOR_LENGTH, input_length=MAX_REVIEW_
 model.add(LSTM(MEMORY_UNITS, dropout=DROPOUT))
 model.add(Dense(5, activation='sigmoid'))
 
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-# model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+# model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 print model.summary()
 
@@ -97,8 +97,16 @@ pyplot.title('model train vs validation loss')
 pyplot.ylabel('loss')
 pyplot.xlabel('epoch')
 pyplot.legend(['train', 'validation'], loc='upper right')
+
+plt.figure()
+pyplot.plot(history.history['acc'])
+pyplot.plot(history.history['val_acc'])
+pyplot.title('model train vs validation accuracy')
+pyplot.ylabel('accuracy')
+pyplot.xlabel('epoch')
+pyplot.legend(['train', 'validation'], loc='upper right')
 pyplot.show()
 
 if SAVE_MODEL:
     print 'saving model...'
-    model.save('model/model_amz_music_instruments.h5')
+    model.save('model/model_amz_' + str(time.time())[:-3] + '.h5')

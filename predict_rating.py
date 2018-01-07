@@ -4,11 +4,11 @@ import utils
 
 tokenizer = utils.load_tokens()
 
-review = "I'm a pro-cheapo and I hated this thing. They're noisy, and the cables feel really cheap, gummy-like. Drop few more bucks and get something else!"
+review = "After a week only one side works"
 
 input_data = utils.convert_review(review, tokenizer)
 
-model_name = 'model/model_amz_music_instruments.h5'
+model_name = 'model/model_amz_1515341586.h5'
 model = load_model(model_name)
 
 predictions = model.predict(input_data)
