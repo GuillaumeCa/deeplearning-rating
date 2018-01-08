@@ -5,8 +5,10 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from keras.layers import LSTM
 from keras.layers.embeddings import Embedding
+from keras.optimizers import Adam
 from keras.preprocessing import sequence, text
 from keras.utils.np_utils import to_categorical
+from keras.callbacks import TensorBoard, ModelCheckpoint
 from matplotlib import pyplot
 import json
 import time
@@ -72,21 +74,32 @@ y_test = reviewsRatings[train_selection:]
 X_train = sequence.pad_sequences(X_train, maxlen=MAX_REVIEW_LENGTH)
 X_test = sequence.pad_sequences(X_test, maxlen=MAX_REVIEW_LENGTH)
 
-# print 'train: ', X_train[:1], len(X_train[0])
-# print 'test: ', X_test[:1], len(X_test[0])
-
 # Create the model
 model = Sequential()
 model.add(Embedding(TOP_WORDS, EMBEDDING_VECTOR_LENGTH, input_length=MAX_REVIEW_LENGTH))
-model.add(LSTM(MEMORY_UNITS, dropout=DROPOUT))
-model.add(Dense(5, activation='sigmoid'))
+model.add(LSTM(MEMORY_UNITS))
+model.add(Dropout(DROPOUT))
+model.add(Dense(5, activation='softmax'))
 
 # model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+optimizer = Adam()
+model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
 print model.summary()
 
-history = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=NB_EPOCHS, batch_size=BATCH_SIZE, shuffle=True)
+# filepath="model/weights-improvement-{epoch:02d}-{loss:.4f}.hdf5"
+# checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
+# callbacks_list = [TensorBoard(), checkpoint]
+callbacks_list = []
+
+history = model.fit(
+    X_train, 
+    y_train, 
+    validation_data=(X_test, y_test), 
+    epochs=NB_EPOCHS, 
+    batch_size=BATCH_SIZE, 
+    shuffle=True,
+    callbacks=callbacks_list)
 
 scores = model.evaluate(X_test, y_test, verbose=0)
 print "Accuracy: %.2f%%" % (scores[1]*100)

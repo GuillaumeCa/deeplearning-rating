@@ -4,11 +4,11 @@ import utils
 
 tokenizer = utils.load_tokens()
 
-review = "After a week only one side works"
+review = "Good but the charger is not the same size as an Apple charger and that makes it a little difficult for charging with cases on." # 2
 
 input_data = utils.convert_review(review, tokenizer)
 
-model_name = 'model/model_amz_1515341586.h5'
+model_name = 'model/weights-improvement-20-0.9417.hdf5'
 model = load_model(model_name)
 
 predictions = model.predict(input_data)

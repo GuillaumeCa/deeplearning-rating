@@ -18,10 +18,10 @@ def convert_review(review, tokenizer):
 
 def display_rating(rating_vector):
     ratings = [1, 2, 3, 4, 5]
-    threshold = 0.6
+    threshold = 0.3
     for index, val in enumerate(rating_vector[0]):
         print 'Rate: {} \t predict: {:.2f}% {}'.format(
-            ratings[index], 
-            val * 100, 
+            ratings[index],
+            val * 100,
             '*' if val > threshold else ''
         )
